@@ -1,0 +1,3 @@
+"""Word Class"""
+class Word():
+    

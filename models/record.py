@@ -1,0 +1,3 @@
+"""Record Class"""
+class Record():
+    

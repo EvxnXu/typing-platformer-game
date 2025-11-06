@@ -1,0 +1,3 @@
+"""Leaderboard Class"""
+class Leaderboard():
+    

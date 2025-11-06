@@ -1,0 +1,2 @@
+"""Graphics Class"""
+class Graphics():

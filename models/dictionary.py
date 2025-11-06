@@ -1,0 +1,3 @@
+"""Dictionary Class"""
+class Dictionary():
+    

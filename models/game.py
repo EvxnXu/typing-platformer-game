@@ -1,0 +1,2 @@
+"""Game class"""
+class Game():
