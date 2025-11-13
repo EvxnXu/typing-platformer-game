@@ -4,13 +4,15 @@ from models import Record
 
 class Assets:
     def __init__(self):
+        pygame.font.init()
+        self.font = pygame.font.Font("assets/Kenney Future Narrow.ttf")
         self.background = pygame.image.load("assets/main-menu.png").convert_alpha()
+        self.settings = pygame.image.load("assets/settings-cog.png").convert_alpha()
+        self.play = pygame.image.load("assets/play-banner.png").convert_alpha()
         self.leaderboard = pygame.image.load("assets/leaderboard.png").convert_alpha()
         self.record_card = pygame.image.load("assets/record-card.png").convert_alpha()
-        self.character = pygame.image.load("assets/green-char.png").convert_alpha()
-        self.play = pygame.image.load("assets/play-banner.png").convert_alpha()
-        self.settings = pygame.image.load("assets/settings-cog.png").convert_alpha()
         self.close = pygame.image.load("assets/close-button.png").convert_alpha()
+        self.character = pygame.image.load("assets/green-char.png").convert_alpha()
 
 
 class Button:
@@ -112,7 +114,9 @@ class Graphics:
         # Add Close Button
         close_width, close_height = self.small_button_size()
         close = pygame.transform.scale(self.assets.close, (close_width, close_height))
-        self.screen.blit(close, (leaderboard_x + leaderboard_width - close_width, leaderboard_y - (close_width * 0.25 )))
+        self.screen.blit(close, (leaderboard_x + leaderboard_width - close_width * 2, leaderboard_y - (close_width * 0.2 )))
+
+        # TODO: Add Column Labels for Records
 
         # Add Record Cards
         record_width, record_height = screen_W * 0.7, screen_H * 0.05
@@ -124,9 +128,21 @@ class Graphics:
             record = records[rank]
 
             # Add Record Card
-            self.screen.blit(record_card, (screen_W * 0.15, leaderboard_y + (leaderboard_height * 0.05) + (record_height + record_spacing) * (rank)))
+            record_y = leaderboard_y + (leaderboard_height * 0.05) + (record_height + record_spacing) * (rank)
+            record_x = screen_W * 0.15
+            self.screen.blit(record_card, (record_x, record_y))
 
-            # TODO: Overlay Record Text
+            # Render Text
+            rank_text = self.assets.font.render(str(rank + 1), True, (255, 255, 255))
+            name_text = self.assets.font.render(record.username, True, (255, 255, 255))
+            score_text = self.assets.font.render(str(record.score), True, (255, 255, 255))
+
+            # Display Text
+            text_y = record_y + (record_height // 2) - (name_text.get_height() // 2)
+
+            self.screen.blit(rank_text, (record_x + (record_width // 30), text_y))
+            self.screen.blit(name_text, (record_x + (record_width // 10), text_y))
+            self.screen.blit(score_text, (screen_W * 0.825 - score_text.get_width(), text_y))
 
 
     def check_button_clicked(self, event: pygame.event):
@@ -153,7 +169,7 @@ class Graphics:
     def anchor_bottom_middle(self, W: int, H: int, w: int, h: int):
         x = W // 2 - w // 2
         y = H - (H // 6) - h // 3
-        return [x, y]
+        return x, y
 
 
     # Helper Functions for Button Sizes
@@ -161,7 +177,7 @@ class Graphics:
         W, H = self.screen.get_size()
         h = H // 11.25
         w = h * 2.875
-        return [w, h]
+        return w, h
     
     
     def small_button_size(self) -> tuple[int, int]:
