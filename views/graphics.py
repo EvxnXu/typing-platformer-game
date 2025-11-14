@@ -1,6 +1,7 @@
 """Graphics Class"""
 import pygame
 from models import Record
+from .button import Button
 
 class Assets:
     def __init__(self):
@@ -13,42 +14,6 @@ class Assets:
         self.record_card = pygame.image.load("assets/record-card.png").convert_alpha()
         self.close = pygame.image.load("assets/close-button.png").convert_alpha()
         self.character = pygame.image.load("assets/green-char.png").convert_alpha()
-
-
-class Button:
-    def __init__(self, name: str, x: int, y: int, w: int, h: int, image: pygame.Surface):
-        """Initialize Button"""
-        self.name = name
-        self.width, self.height = w, h
-        self.image = pygame.transform.scale(image, (w, h))
-        self.mask = pygame.mask.from_surface(self.image)
-        self.rect = self.image.get_rect(topleft=(x, y))
-
-
-    def draw(self, surface: pygame.Surface):
-        """Function to Draw button"""
-        # Draw Button Rectangle
-        # pygame.draw.rect(surface, Color.BACKGROUND.value, self.rect) # Default Color: Blue
-        
-        # Icon Mode
-        img_rect = self.image.get_rect(center=self.rect.center)
-        surface.blit(self.image, img_rect)
-
-
-    def is_clicked(self, event: pygame.event.Event) -> bool:
-        """Check if button was clicked"""
-        # Mouse Coordinates
-        mx, my = event.pos
-
-        # Rectangle Check
-        if not self.rect.collidepoint(mx, my):
-            return False
-        
-        # Convert Mouse Coordinates to Image Coordinates
-        lx, ly = mx - self.rect.x, my - self.rect.y
-
-        # Pixel Perfect Check
-        return self.mask.get_at((lx, ly)) == 1
 
 
 class Graphics:
@@ -114,7 +79,7 @@ class Graphics:
         # Add Close Button
         close_width, close_height = self.small_button_size()
         close = pygame.transform.scale(self.assets.close, (close_width, close_height))
-        self.screen.blit(close, (leaderboard_x + leaderboard_width - close_width * 2, leaderboard_y - (close_width * 0.2 )))
+        self.buttons.append(Button("close", (leaderboard_x + leaderboard_width - close_width * 2), (leaderboard_y - (close_width * 0.2 )), close_width, close_height, close))
 
         # TODO: Add Column Labels for Records
 
@@ -144,6 +109,8 @@ class Graphics:
             self.screen.blit(name_text, (record_x + (record_width // 10), text_y))
             self.screen.blit(score_text, (screen_W * 0.825 - score_text.get_width(), text_y))
 
+        for button in self.buttons:
+            button.draw(self.screen)
 
     def check_button_clicked(self, event: pygame.event):
         """If event was mouse click, return clicked button if applicable"""
