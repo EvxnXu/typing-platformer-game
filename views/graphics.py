@@ -17,8 +17,11 @@ class Assets:
 
 
 class Graphics:
-    def __init__(self, screen: pygame.Surface):
-        self.screen = screen
+    def __init__(self): 
+        w = pygame.display.Info().current_w
+        self.screen =  pygame.display.set_mode((w/4, w/4*1.5))
+        pygame.display.set_caption("Test")
+
         self.assets = Assets()
         self.buttons: list[Button] = []
 
