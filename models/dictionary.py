@@ -1,5 +1,5 @@
 """Dictionary Class"""
-from word import Word
+from .word import Word
 
 class Dictionary():
     def __init__(self, min: int, max: int, words: list[Word]):

@@ -1,6 +1,5 @@
 """Game Controller Class"""
 import pygame
-from views import Graphics
 from models import Game
 from models import Record
 from models import Leaderboard
@@ -14,7 +13,6 @@ class GameController():
         self.clock = pygame.time.Clock()
         self.difficulty_multiplier = 1
         self.game = Game(self.difficulty_multiplier)
-        self.records = list[Record()]
         self.leaderboard = Leaderboard()
         
         

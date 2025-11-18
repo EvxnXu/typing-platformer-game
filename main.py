@@ -1,13 +1,16 @@
 import pygame
-from views.graphics import Graphics
-from controllers.game_controller import GameController
+from views import Graphics
+from controllers import GameController
 
 if __name__ == "__main__":
-    screen = pygame.display.set_mode((1280,720))
-    graphics = Graphics(screen)
+    pygame.init()
+    
+    graphics = Graphics()
     
     game_controller = GameController()
-   
+    
+    graphics.render_main_menu()
+    
     running = True
     # Main Game Loop
     while running:
@@ -38,7 +41,6 @@ if __name__ == "__main__":
                             game_controller.difficulty_multiplier = 1
                         game_controller.end_game()
                     
-
             case "Play":
                 # Play State
                 # To-do: render game
@@ -58,7 +60,6 @@ if __name__ == "__main__":
                     
                     # Most gameplay would go here
                     
-
             case "Pause":
                 # Pause State
                 # To-do: render pause menu
@@ -79,11 +80,9 @@ if __name__ == "__main__":
                             game_controller.difficulty_multiplier = 1
                         game_controller.end_game()
                         
-                        
-
             case "End":
                 # End State
-                graphics.render_end_screen(game_controller.game, game_controller.record)
+                # To-do: render end screen with leaderboard
                 
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
@@ -100,8 +99,6 @@ if __name__ == "__main__":
                             game_controller.difficulty_multiplier = 1
                         game_controller.end_game()
                         
-                        
-            
             case _: # Default
                 print("What?")
                 game_controller.state = "Menu"
