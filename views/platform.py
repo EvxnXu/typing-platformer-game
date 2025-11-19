@@ -25,6 +25,7 @@ class Platform:
         word_rect = word_surf.get_rect(center = self.rect.center)
         screen.blit(word_surf, word_rect)
 
+
     def fit_font(self):
         """Fit Font Size to Platform"""
         font_size = self.height // 3
@@ -44,8 +45,20 @@ class Platform:
         while True: 
             x = random.randint(0, W - self.width)
             y = random.randint(0, H // 2 - self.height)
-
+            
             new_rect = pygame.Rect(x, y, self.width, self.height)
 
             if not any(new_rect.colliderect(platform.rect) for platform in existing):
                 return x, y
+    
+
+    def current_position(self) -> tuple[int, int]:
+        """Get Current Position of the Platform"""
+        return self.x, self.y
+    
+    
+    def update_position(self, dx: int, dy: int) -> bool:
+        """Update the Position of the Platform"""
+        self.x += dx
+        self.y += dy
+        self.rect.topleft = (self.x, self.y)

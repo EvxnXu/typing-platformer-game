@@ -29,6 +29,7 @@ class Character:
         self.y = platform.y - self.height + platform.height // 6
         self.rect.topleft = (self.x, self.y)
 
+
     def get_size(self, screen: pygame.Surface):
         """Get Size of Character"""
         w = screen.get_size()[0]

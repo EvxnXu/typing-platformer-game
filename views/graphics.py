@@ -1,12 +1,15 @@
 """Graphics Class"""
 import pygame
-from models import Record
+from models import Record, Word
 from .button import Button
+from .platform import Platform
+from .character import Character
 
 class Assets:
+    """Asset Class to Load and store Game Assets"""
     def __init__(self):
         pygame.font.init()
-        self.font = pygame.font.Font("assets/Kenney Future Narrow.ttf")
+        self.font = pygame.font.Font("assets/Kenney Future Narrow.ttf", 18)
         self.background = pygame.image.load("assets/background.png").convert_alpha()
         self.main_menu = pygame.image.load("assets/main-menu.png").convert_alpha()
         self.settings = pygame.image.load("assets/settings-cog.png").convert_alpha()
@@ -26,9 +29,11 @@ class Graphics:
 
         self.assets = Assets()
         self.buttons: list[Button] = []
+        self.platforms: list[Platform] = []
+        self.character = Character(self.screen, self.assets.character)
 
 
-    # Functions for Rendering Screens
+    # Functions for Rendering States Onto the Screen
     def render_main_menu(self):
         """Render the Main Menu onto the Screen"""
         # Get Size of Screen
@@ -88,8 +93,50 @@ class Graphics:
             button.render_text_center(button.name, self.assets.font, self.screen)
 
 
-    def render_game(self):
-        pass
+    def render_game(self, new_words: list[Word] = [], matched_word: str = None):
+        # Get Size of Screen
+        screen_W, screen_H = self.screen.get_size()
+
+        # Fill Background
+        bg = pygame.transform.scale(self.assets.background, (screen_W, screen_H))
+        self.screen.blit(bg, (0, 0))
+
+        # If No Platforms Exist, Create Initial Platform and Place Character on It
+        if not self.platforms:
+            initial_platform = Platform(self.screen, self.assets.cloud, "start")
+            initial_platform.x, initial_platform.y = self.anchor_middle(screen_W, screen_H, initial_platform.width, initial_platform.height)
+            initial_platform.rect.topleft = (initial_platform.x, initial_platform.y)
+            self.platforms.append(initial_platform)
+            self.character.teleport_to_platform(initial_platform)
+
+        # Update the Location of Current Platforms if Applicable
+        if matched_word:
+            dx, dy = 0, 0
+            # Calculate Displacement to Center Matched Platform
+            for platform in self.platforms:
+                if platform.word == matched_word:
+                    dest_x, dest_y = self.anchor_middle(screen_W, screen_H, platform.width, platform.height)
+                    curr_x, curr_y = platform.current_position()
+                    dx, dy = curr_x - dest_x, curr_y - dest_y
+            # Update Positions of All Platforms and Character
+            for platform in self.platforms:
+                platform.update_position(-dx, -dy)
+                if platform.word == matched_word:
+                    self.character.teleport_to_platform(platform)
+
+        # Add Platforms for New Words if Applicable
+        for word in new_words:
+            print(word.word)
+            platform = Platform(self.screen, self.assets.cloud, word.word, self.platforms)
+            platform.draw(self.screen)
+            self.platforms.append(platform)
+
+        # Draw Platforms
+        for platform in self.platforms:
+            platform.draw(self.screen)
+
+        # Draw the Character
+        self.character.draw(self.screen)
 
 
     def render_leaderboard(self, records: list[Record]):
@@ -144,6 +191,7 @@ class Graphics:
         for button in self.buttons:
             button.draw(self.screen)
 
+
     def check_button_clicked(self, event: pygame.event):
         """If event was mouse click, return clicked button if applicable"""
         if event.type != pygame.MOUSEBUTTONDOWN:
@@ -155,7 +203,8 @@ class Graphics:
                 return button.name
         
         return None
-            
+    
+
     # Layout Helpers
     def anchor_top_left(self, margin = 10):
         return margin, margin
@@ -163,6 +212,10 @@ class Graphics:
 
     def anchor_top_right(self, W: int, w: int, margin = 10):
         return W - w - margin, margin
+    
+
+    def anchor_middle(self, W: int, H: int, w: int, h: int):
+        return W // 2 - w // 2, H // 2 - h // 2
 
 
     # Button Helpers
