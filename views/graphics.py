@@ -57,8 +57,35 @@ class Graphics:
             button.draw(self.screen)
             
     
-    def render_settings(self):
-        pass
+    def render_pause(self):
+        # Get Size of Screen
+        screen_W, screen_H = self.screen.get_size()
+
+        # Fill Background
+        bg = pygame.transform.scale(self.assets.background, (screen_W, screen_H))
+        self.screen.blit(bg, (0, 0))
+
+        # Add Pause Card
+        pause_width, pause_height = screen_W * 0.6, screen_W * 0.9
+        pause_x, pause_y = screen_W * 0.2, screen_H * 0.2
+        pause = pygame.transform.scale(self.assets.leaderboard, (pause_width, pause_height))
+
+        self.screen.blit(pause, (pause_x, pause_y))
+
+        # Resume Button
+        button_w, button_h = self.banner_size()
+        resume_x, resume_y = screen_W // 2 - button_w // 2, pause_y + button_h
+        self.buttons.append(Button("resume", resume_x, resume_y, button_w, button_h, self.assets.record_card))
+
+        # End Game Button
+        button_w, button_h = self.banner_size()
+        end_x, end_y = resume_x, resume_y + button_h * 1.5
+        self.buttons.append(Button("end", end_x, end_y, button_w, button_h, self.assets.record_card))
+        
+        # Draw Buttons
+        for button in self.buttons:
+            button.draw(self.screen)
+            button.render_text_center(button.name, self.assets.font, self.screen)
 
 
     def render_game(self):
