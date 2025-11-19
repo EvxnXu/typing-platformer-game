@@ -36,6 +36,7 @@ class Graphics:
     # Functions for Rendering States Onto the Screen
     def render_main_menu(self):
         """Render the Main Menu onto the Screen"""
+        self.buttons = []
         # Get Size of Screen
         screen_W, screen_H = self.screen.get_size()
 
@@ -63,6 +64,7 @@ class Graphics:
             
     
     def render_pause(self):
+        self.buttons = []
         # Get Size of Screen
         screen_W, screen_H = self.screen.get_size()
 
@@ -94,6 +96,7 @@ class Graphics:
 
 
     def render_game(self, new_words: list[Word] = [], matched_word: str = None):
+        self.buttons = []
         # Get Size of Screen
         screen_W, screen_H = self.screen.get_size()
 
@@ -141,6 +144,7 @@ class Graphics:
 
     def render_leaderboard(self, records: list[Record]):
         """Render Leaderboard"""
+        self.buttons = []
         # Get Size of Screen
         screen_W, screen_H = self.screen.get_size()
 
