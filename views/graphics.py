@@ -196,6 +196,40 @@ class Graphics:
             button.draw(self.screen)
 
 
+    def render_end_game(self, score: int, input: str):
+        """Render End Game Screen"""
+        self.buttons = []
+        # Get Size of Screen
+        screen_W, screen_H = self.screen.get_size()
+
+        # Fill Background
+        bg = pygame.transform.scale(self.assets.background, (screen_W, screen_H))
+        self.screen.blit(bg, (0, 0))
+
+        # Add Leaderboard Card
+        leaderboard_width, leaderboard_height = screen_W * 0.8, screen_W * 1.2
+        leaderboard_x, leaderboard_y = screen_W * 0.1, screen_H * 0.1
+        leaderboard = pygame.transform.scale(self.assets.leaderboard, (leaderboard_width, leaderboard_height))
+
+        self.screen.blit(leaderboard, (leaderboard_x, leaderboard_y))
+
+        # Render Prompt Text
+        score_text = self.assets.font.render(f"Score: {score}", True, (0, 0, 0))
+        prompt_text = self.assets.font.render(f"Enter your name: {input}", True, (0, 0, 0))
+
+
+        # Horizontal center of leaderboard
+        center_x = leaderboard_x + leaderboard_width // 2
+
+        # Create centered rects
+        score_rect = score_text.get_rect(center=(center_x, leaderboard_y + 50))
+        prompt_rect = prompt_text.get_rect(center=(center_x, leaderboard_y + 120))
+
+        # Draw text
+        self.screen.blit(score_text, score_rect)
+        self.screen.blit(prompt_text, prompt_rect)
+
+
     def check_button_clicked(self, event: pygame.event):
         """If event was mouse click, return clicked button if applicable"""
         if event.type != pygame.MOUSEBUTTONDOWN:
