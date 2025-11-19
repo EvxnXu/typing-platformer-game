@@ -29,7 +29,7 @@ class Platform:
     def fit_font(self):
         """Fit Font Size to Platform"""
         font_size = self.height // 3
-        self.font = pygame.font.Font("assets/Kenney Future Narrow.ttf", font_size)
+        self.font = pygame.font.Font("assets/Kenney Mini.ttf", font_size)
         
 
     def get_size(self, screen: pygame.Surface):

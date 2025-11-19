@@ -9,7 +9,7 @@ class Assets:
     """Asset Class to Load and store Game Assets"""
     def __init__(self):
         pygame.font.init()
-        self.font = pygame.font.Font("assets/Kenney Future Narrow.ttf", 18)
+        self.font = pygame.font.Font("assets/Kenney Mini.ttf", 18)
         self.background = pygame.image.load("assets/background.png").convert_alpha()
         self.main_menu = pygame.image.load("assets/main-menu.png").convert_alpha()
         self.settings = pygame.image.load("assets/settings-cog.png").convert_alpha()
