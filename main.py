@@ -9,95 +9,92 @@ if __name__ == "__main__":
     
     game_controller = GameController()
     
+    username = ""
     running = True
     # Main Game Loop
     while running:
         
-        dtime = game_controller.clock.tick(60) / 1000
+        dtime = game_controller.clock.tick(60) / 1000.0
         pygame.display.update()
-        match game_controller.state:
-            
-            case "Menu":
-                # Menu State
-                graphics.render_main_menu()
-                pygame.display.update()
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        running = False
-                    
+        if game_controller.state == "menu":
+            graphics.render_main_menu()
+            pygame.display.update()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                    break
+                if event.type == pygame.MOUSEBUTTONDOWN:
                     click = graphics.check_button_clicked(event)
-                    if click == "Play":
+                    if click == "play":
                         game_controller.start_game(game_controller.difficulty_multiplier)
-                        
-                        # Do we need to implement graphics.clear_graphics() so 
-                        # stuff doesn't overlap?
-                        graphics.render_game()
-                    elif click == "Difficulty":
-                        # Depends on how many difficulties/dictionaries we want
+                    elif click == "difficulty":
                         game_controller.difficulty_multiplier += 1
                         if game_controller.difficulty_multiplier > 3:
                             game_controller.difficulty_multiplier = 1
-                        game_controller.end_game()
-                    
-            case "Play":
-                # Play State
-                # To-do: render game
-                graphics.render_game(game_controller.game)
-                pygame.display.update()
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        running = False
-                    
-                    if event.type == pygame.K_ESCAPE:
-                        game_controller.state = "Pause"
-                    
-                    game_controller.handle_input(event)
-                    
-                    if game_controller.game.is_over() == True:
-                        game_controller.end_game()
-                    
-                    # Most gameplay would go here
-                    
-            case "Pause":
-                # Pause State
-                # To-do: render pause menu
-                pygame.display.update()
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        running = False
-                    
+            pygame.event.clear()
+        elif game_controller.state == "play":
+            game_controller.game.update_time(-dtime)
+            graphics.render_game()
+            pygame.display.update()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                    break
+
+                game_controller.handle_input(event)
+            pygame.event.clear()
+            if game_controller.game.is_over():
+                game_controller.end_game()
+
+        elif game_controller.state == "pause":
+            graphics.render_pause_menu()
+            pygame.display.update()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                    break
+                if event.type == pygame.MOUSEBUTTONDOWN:
                     click = graphics.check_button_clicked(event)
-                    if click == "Play":
-                        game_controller.state = "Play"
-                        
-                    elif click == "Difficulty":
-                        # Depends on how many difficulties/dictionaries we want
+                    if click == "play":
+                        game_controller.state = "play"
+                    elif click == "difficulty":
                         game_controller.difficulty_multiplier += 1
                         if game_controller.difficulty_multiplier > 3:
                             game_controller.difficulty_multiplier = 1
-                        game_controller.end_game()
-                        
-            case "End":
-                # End State
-                # To-do: render end screen with leaderboard
-                pygame.display.update()
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        running = False
-                        
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                    game_controller.state = "play"
+
+            pygame.event.clear()
+
+        elif game_controller.state == "end":
+            graphics.render_leaderboard([])
+            pygame.display.update()
+            pygame.key.start_text_input()
+            
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                    break
+                if event.type == pygame.TEXTINPUT:
+                    username += event.text
+                if event.type == pygame.MOUSEBUTTONDOWN:
                     click = graphics.check_button_clicked(event)
-                    if click == "Play":
-                        game_controller.state = "Play"
-                        
-                    elif click == "Difficulty":
-                        # Depends on how many difficulties/dictionaries we want
+                    if click == "play":
+                        game_controller.start_game(game_controller.difficulty_multiplier)
+                        username = ""
+                    elif click == "difficulty":
                         game_controller.difficulty_multiplier += 1
                         if game_controller.difficulty_multiplier > 3:
                             game_controller.difficulty_multiplier = 1
-                        game_controller.end_game()
-                        
-            case _: # Default
-                print("What?")
-                game_controller.state = "Menu"
-                
+
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                    game_controller.state = "play"
+            pygame.event.clear()
+            pygame.key.stop_text_input()        
+            
+        else:
+            game_controller.state = "menu"
+        
+        pygame.display.flip()
+                    
     pygame.quit()
