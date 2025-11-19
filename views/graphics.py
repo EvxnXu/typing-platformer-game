@@ -228,7 +228,7 @@ class Graphics:
         W, H = self.screen.get_size()
         self.platforms = []
         starting_platform = Platform(self.screen, self.assets.cloud, "")
-        starting_platform.x, starting_platform.y = self.anchor_middle(W, H, starting_platform.width, starting_platform.height)
+        starting_platform.x, starting_platform.y = self.anchor_bottom_middle(W, H, starting_platform.width, starting_platform.height)
         starting_platform.rect.topleft = (starting_platform.x, starting_platform.y)
         self.character.teleport_to_platform(starting_platform)
         self.platforms.append(starting_platform)
@@ -248,21 +248,30 @@ class Graphics:
         screen_W, screen_H = self.screen.get_size()
         dx, dy = 0, 0
 
-        # Calculate Displacement to Center Matched Platform
+        # Find Platform with Matching Word
+        matched_platform = None
         for platform in self.platforms:
             if platform.word == matched_word:
-                dest_x, dest_y = self.anchor_middle(screen_W, screen_H, platform.width, platform.height)
-                curr_x, curr_y = platform.current_position()
-                dx, dy = curr_x - dest_x, curr_y - dest_y
+                matched_platform = platform
             else:
                 platform.word = ""
-    
+
+        # Compute displacement
+        dest_x, dest_y = self.anchor_bottom_middle(
+            screen_W, screen_H,
+            matched_platform.width, matched_platform.height
+        )
+        curr_x, curr_y = matched_platform.current_position()
+        dx, dy = curr_x - dest_x, curr_y - dest_y
+
+        updated_platforms = []
         # Update Positions of All Platforms and Character
         for platform in self.platforms:
-            if not platform.update_position(-dx, -dy, screen_W, screen_H):
-                self.platforms.remove(platform)
-            if platform.word == matched_word:
-                self.character.teleport_to_platform(platform)
+            if platform.update_position(-dx, -dy, screen_W, screen_H):
+                updated_platforms.append(platform)
+        
+        self.character.teleport_to_platform(matched_platform)
+        self.platforms = updated_platforms
 
 
     # Button Size Helpers
@@ -292,6 +301,7 @@ class Graphics:
         return W // 2 - w // 2, margin
     
 
-    def anchor_middle(self, W: int, H: int, w: int, h: int):
-        return W // 2 - w // 2, H // 2 - h // 2
+    def anchor_bottom_middle(self, W: int, H: int, w: int, h: int):
+        return W // 2 - w // 2, H - h - (H // 12)
+    
     

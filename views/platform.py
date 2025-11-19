@@ -44,7 +44,7 @@ class Platform:
 
         while True: 
             x = random.randint(0, W - self.width)
-            y = random.randint(0, H // 2 - self.height)
+            y = random.randint(H // 12, H // 2 - self.height)
             
             new_rect = pygame.Rect(x, y, self.width, self.height)
 
@@ -57,8 +57,21 @@ class Platform:
         return self.x, self.y
     
     
-    def update_position(self, dx: int, dy: int) -> bool:
+    def update_position(self, dx: int, dy: int, W: int, H: int) -> bool:
         """Update the Position of the Platform"""
         self.x += dx
         self.y += dy
+
+        # Compute boundaries
+        left = self.x
+        right = self.x + self.width
+        top = self.y
+        bottom = self.y + self.height
+
+        # Check for fully out of bounds
+        if right < 0 or left > W or bottom < 0 or top > H:
+            return False
+
+        # Update rect
         self.rect.topleft = (self.x, self.y)
+        return True
