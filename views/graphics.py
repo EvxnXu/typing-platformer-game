@@ -7,13 +7,15 @@ class Assets:
     def __init__(self):
         pygame.font.init()
         self.font = pygame.font.Font("assets/Kenney Future Narrow.ttf")
-        self.background = pygame.image.load("assets/main-menu.png").convert_alpha()
+        self.background = pygame.image.load("assets/background.png").convert_alpha()
+        self.main_menu = pygame.image.load("assets/main-menu.png").convert_alpha()
         self.settings = pygame.image.load("assets/settings-cog.png").convert_alpha()
         self.play = pygame.image.load("assets/play-banner.png").convert_alpha()
         self.leaderboard = pygame.image.load("assets/leaderboard.png").convert_alpha()
         self.record_card = pygame.image.load("assets/record-card.png").convert_alpha()
         self.close = pygame.image.load("assets/close-button.png").convert_alpha()
         self.character = pygame.image.load("assets/green-char.png").convert_alpha()
+        self.cloud = pygame.image.load("assets/cloud.png").convert_alpha()
 
 
 class Graphics:
@@ -33,22 +35,22 @@ class Graphics:
         screen_W, screen_H = self.screen.get_size()
 
         # Fill Background
-        bg = pygame.transform.scale(self.assets.background, (screen_W, screen_H))
+        bg = pygame.transform.scale(self.assets.main_menu, (screen_W, screen_H))
         self.screen.blit(bg, (0, 0))
 
         # Create Buttons
 
         # Play Button
-        button_w, button_h = self.play_button_size()
-        play_x, play_y = self.anchor_bottom_middle(screen_W, screen_H, button_w, button_h)
+        button_w, button_h = self.banner_size()
+        play_x, play_y = screen_W // 2 - button_w // 2, screen_H - (screen_H // 6) - button_h // 3
         self.buttons.append(Button("play", play_x, play_y, button_w, button_h, self.assets.play))
 
         # Settings Button
         button_w, button_h = self.small_button_size()
         settings_x, settings_y = self.anchor_top_right(screen_W, button_w)
-        self.buttons.append(Button("settings", settings_x, settings_y, button_w, button_h, self.assets.settings))
+        self.buttons.append(Button("leaderboard", settings_x, settings_y, button_w, button_h, self.assets.settings))
 
-        # TODO: Add Difficulty Buttons
+        # TODO: Add Difficulty Button
 
         # Draw Buttons
         for button in self.buttons:
@@ -134,16 +136,10 @@ class Graphics:
 
     def anchor_top_right(self, W: int, w: int, margin = 10):
         return W - w - margin, margin
-    
-
-    def anchor_bottom_middle(self, W: int, H: int, w: int, h: int):
-        x = W // 2 - w // 2
-        y = H - (H // 6) - h // 3
-        return x, y
 
 
-    # Helper Functions for Button Sizes
-    def play_button_size(self) -> tuple[int, int]:
+    # Button Helpers
+    def banner_size(self) -> tuple[int, int]:
         W, H = self.screen.get_size()
         h = H // 11.25
         w = h * 2.875
