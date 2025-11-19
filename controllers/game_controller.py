@@ -7,7 +7,7 @@ from views import Graphics
 prototype_records = [Record("Mario", 99), Record("Mario", 98), Record("Luigi", 95), Record("Bob the Builder", 90)]
 prototype_words = []
 for word in ["Example", "Typing", "Words", "Platform", "Python", "Programming", "Development", "Controller", "Graphics", "Functionality"]:
-    prototype_words.append([Word(10, word)])
+    prototype_words.append(Word(10, word))
 
 class GameController():
     
@@ -23,6 +23,7 @@ class GameController():
 
     def main_loop(self):
         running = True
+        pygame.key.start_text_input()
 
         # Main Game Loop
         while running:
@@ -30,132 +31,129 @@ class GameController():
             dtime = self.clock.tick(60) / 1000.0
             pygame.display.update()
 
+            # Render According to State
+
             # Main Menu State
             if self.state == "menu":
                 self.graphics.render_main_menu()
-                pygame.display.update()
-
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        running = False
-                        break
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        click = self.graphics.check_button_clicked(event)
-                        if click == "play":
-                            self.start_game(self.difficulty_multiplier)
-                        elif click == "leaderboard":
-                            self.state = "leaderboard"
-                        elif click == "difficulty":
-                            self.difficulty_multiplier += 1
-                            if self.difficulty_multiplier > 3:
-                                self.difficulty_multiplier = 1
-                pygame.event.clear()
             
-            # Game Playing State
-            elif self.state == "play":
+            # Play State
+            if self.state == "play":
                 self.game.update_time(-dtime)
-                self.graphics.render_game()
-                pygame.display.update()
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        running = False
-                        break
-                    if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                        self.state = "pause"
-                        break
-                    self.handle_input(event)
-                pygame.event.clear()
                 if self.game.is_over():
-                    self.end_game()
+                    self.state = "end"
+                    self.current_input_string = ""
+                    self.graphics.render_end_game(self.game.score, self.current_input_string)
+                else:
+                    self.graphics.render_game(self.game, self.current_input_string)
 
             # Pause State
             elif self.state == "pause":
                 self.graphics.render_pause()
-                pygame.display.update()
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        running = False
-                        break
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        click = self.graphics.check_button_clicked(event)
-                        if click == "resume":
-                            self.state = "play"
-                        elif click == "end":
-                            self.state = "end"
-                    if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                        self.state = "play"
-
-                pygame.event.clear()
 
             # Leaderboard State
             elif self.state == "leaderboard":
                 self.graphics.render_leaderboard(prototype_records)
-                pygame.display.update()
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        running = False
-                        break
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        click = self.graphics.check_button_clicked(event)
-                        if click == "close":
-                            self.state = "menu"
-                pygame.event.clear()
 
             # End Game State
             elif self.state == "end":
-                self.graphics.render_end_game(self.game.score, self.current_input_string)
-                pygame.display.update()
-                pygame.key.start_text_input()
-                
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        running = False
-                        break
-                    elif event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-                        # Save Record
-                        prototype_records.append(Record(self.current_input_string, self.game.score))
-                        self.state = "leaderboard"
-                        self.current_input_string = ""
-                        break
-                    elif event.type == pygame.TEXTINPUT:
-                        self.current_input_string += event.text
-                pygame.event.clear()
-                pygame.key.stop_text_input()        
-                
-            else:
+                self.graphics.render_end_game(self.game.score, self.current_input_string) 
+
+
+            # Global Event Handling
+            for event in pygame.event.get():
+
+                # Quit Game Event
+                if event.type == pygame.QUIT:
+                    running = False
+                    break
+
+                # Text Input
+                elif event.type == pygame.TEXTINPUT:
+                    self.handle_input(event.text)
+
+                # Keystrokes
+                elif event.type == pygame.KEYDOWN:
+                    self.handle_key(event.key)
+
+                # Mouse Clicks
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    self.handle_click(self.graphics.check_button_clicked(event))
+        
+        # Stop Text Input when Exiting Game
+        pygame.key.stop_text_input()  
+    
+
+    def handle_key(self, key):
+        """Handle Keystroke Events"""
+        if key == pygame.K_ESCAPE:
+            if self.state == "play":
+                self.state = "pause"
+            elif self.state == "pause":
+                self.state = "play"
+            elif self.state == "leaderboard":
                 self.state = "menu"
-            
-            pygame.display.flip()
+        elif key == pygame.K_RETURN:
+            if self.state == "end":
+                prototype_records.append(Record(self.current_input_string, self.game.score))
+                self.current_input_string = ""
+                self.state = "leaderboard"
+        elif key == pygame.K_BACKSPACE:
+            if self.state == "play":
+                self.current_input_string = self.current_input_string[:-1]
+    
+
+    def handle_click(self, click):
+        """Handle Mouse Click Events"""
+        if click == "play":
+            self.start_game(self.difficulty_multiplier)
+            words = []
+            for i in range(3):
+                words.append(prototype_words[-i])
+            self.game.update_words(words) # Placeholder for new words
+            self.graphics.init_game_elements(words)
+            self.graphics.add_words(words)
+            self.state = "play"
+        elif click == "leaderboard":
+            self.state = "leaderboard"
+        elif click == "difficulty":
+            self.difficulty_multiplier += 1
+            if self.difficulty_multiplier > 3:
+                self.difficulty_multiplier = 1
+        elif click == "resume":
+            self.state = "play"
+        elif click == "end":
+            self.state = "end"
+        elif click == "close":
+            self.state = "menu"
+
         
-        
-    def handle_input(self, event: pygame.event):
-        """Handle Input"""
+    def handle_input(self, text: str):
+        """Handle Input During Gameplay"""
+        # print(f"Handling Input: {text}")
         # To-Do: Gameplay needs this function to check input strings
         # Use pygame to check if letters are typed, store the letters.
         # Check the buffer against the word options.
-        if event.type == pygame.KEYDOWN:
-            if self.state == "play":
-                if event.type == pygame.K_ESCAPE:
-                    self.state = "pause"
-            elif self.state == "pause":
-                if event.type == pygame.K_ESCAPE:
-                    self.state = "play"
+        self.current_input_string += text
+
         if self.state == "play":
-            pygame.key.start_text_input()
-            for event in pygame.event.get():
-                if event.type == pygame.TEXTINPUT:
-                    self.current_input_string += event.text
-                    if self.game.validate_word(self.current_input_string):
-                        # Prototype Logic for Handling Correct Input
-                        self.game.update_score(10)
-                        self.game.update_time(5.0)
-                        self.game.update_words([Word(10, "Example"), Word(10, "Typing"), Word(10, "Words")]) # Placeholder for new words
-                        pygame.key.stop_text_input()
-                        print("Correct Input")
-                    else:
-                        print("Incorrect Input")
-                        pass
-        pygame.event.clear()
+            print(f"Validating Input... {self.current_input_string}")
+            if self.game.validate_word(self.current_input_string):
+                # Prototype Logic for Handling Correct Input
+                self.game.update_score(10)
+                self.game.update_time(5.0)
+                words = []
+                for i in range(3):
+                    words.append(prototype_words[i])
+                self.game.update_words(words) # Placeholder for new words
+                self.graphics.update_platforms(self.current_input_string)
+                self.graphics.add_words(words)
+                self.current_input_string = ""
+                print("Correct Input")
+            else:
+                self.graphics.render_game(self.game, self.current_input_string)
+
+        print("End Input Handling")
 
         
     def start_game(self, difficulty_multiplier: int):
