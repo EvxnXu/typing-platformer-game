@@ -9,20 +9,18 @@ if __name__ == "__main__":
     
     game_controller = GameController()
     
-    graphics.render_main_menu()
-    
     running = True
     # Main Game Loop
     while running:
         
         dtime = game_controller.clock.tick(60) / 1000
-        
+        pygame.display.update()
         match game_controller.state:
             
             case "Menu":
                 # Menu State
                 graphics.render_main_menu()
-                
+                pygame.display.update()
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         running = False
@@ -45,7 +43,7 @@ if __name__ == "__main__":
                 # Play State
                 # To-do: render game
                 graphics.render_game(game_controller.game)
-                
+                pygame.display.update()
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         running = False
@@ -63,8 +61,7 @@ if __name__ == "__main__":
             case "Pause":
                 # Pause State
                 # To-do: render pause menu
-                graphics.render_pause_menu()
-                
+                pygame.display.update()
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         running = False
@@ -83,7 +80,7 @@ if __name__ == "__main__":
             case "End":
                 # End State
                 # To-do: render end screen with leaderboard
-                
+                pygame.display.update()
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         running = False
