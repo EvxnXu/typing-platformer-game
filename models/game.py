@@ -22,8 +22,10 @@ class Game():
 
     def validate_word(self, input: str) -> bool:
         """Validate Input against Current Words"""
-        if input in self.current_words:
-            return True
+        for word in self.current_words:
+            print(f"validating {input} against {word.word}")
+            if input == word.word:
+                return True
         return False
     
 
