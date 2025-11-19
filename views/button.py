@@ -35,3 +35,9 @@ class Button:
 
         # Pixel Perfect Check
         return self.mask.get_at((lx, ly)) == 1
+    
+    def render_text_center(self, text: str, font: pygame.font.Font, surface: pygame.Surface):
+        """Render Text Centered on Button"""
+        text_surf = font.render(text, True, (255, 255, 255))
+        text_rect = text_surf.get_rect(center = self.rect.center)
+        surface.blit(text_surf, text_rect)
