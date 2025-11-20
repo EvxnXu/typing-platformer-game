@@ -49,7 +49,7 @@ class GameController():
 
             # Pause State
             elif self.state == "pause":
-                self.graphics.render_pause()
+                self.graphics.render_pause_menu()
 
             # Leaderboard State
             elif self.state == "leaderboard":
@@ -166,3 +166,4 @@ class GameController():
     def end_game(self):
         """End Game"""
         self.state = "end"
+        #TODO: Save Record

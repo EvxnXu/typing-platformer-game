@@ -63,7 +63,7 @@ class Graphics:
             button.draw(self.screen)
             
     
-    def render_pause(self):
+    def render_pause_menu(self):
         self.buttons = []
         # Get Size of Screen
         screen_W, screen_H = self.screen.get_size()
