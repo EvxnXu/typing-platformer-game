@@ -53,7 +53,7 @@ class GameController():
 
             # Leaderboard State
             elif self.state == "leaderboard":
-                self.graphics.render_leaderboard(prototype_records)
+                self.graphics.render_leaderboard(self.leaderboard.get_top_records())
 
             # End Game State
             elif self.state == "end":
@@ -95,7 +95,7 @@ class GameController():
                 self.state = "menu"
         elif key == pygame.K_RETURN:
             if self.state == "end":
-                prototype_records.append(Record(self.current_input_string, self.game.score))
+                self.leaderboard.add_record(Record(self.current_input_string, self.game.score))
                 self.current_input_string = ""
                 self.state = "leaderboard"
         elif key == pygame.K_BACKSPACE:
@@ -166,4 +166,3 @@ class GameController():
     def end_game(self):
         """End Game"""
         self.state = "end"
-        #TODO: Save Record
