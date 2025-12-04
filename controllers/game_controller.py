@@ -1,6 +1,6 @@
 """Game Controller Class"""
 import pygame
-from models import Game, Record, Leaderboard, Word
+from models import Game, Record, Leaderboard, Word, WordManager
 from views import Graphics
 
 # Prototype Records and Words
@@ -20,6 +20,7 @@ class GameController():
         self.state = "menu"
         self.difficulty_multiplier = 1
         self.current_input_string = ""
+        self.word_manager = WordManager()
 
     def main_loop(self):
         running = True
@@ -107,10 +108,8 @@ class GameController():
         """Handle Mouse Click Events"""
         if click == "play":
             self.start_game(self.difficulty_multiplier)
-            words = []
-            for i in range(3):
-                words.append(prototype_words[-i])
-            self.game.update_words(words) # Placeholder for new words
+            words = self.word_manager.get_three_cloud_words()
+            self.game.update_words(words)
             self.graphics.init_game_elements(words)
             self.graphics.add_words(words)
             self.state = "play"
@@ -139,13 +138,24 @@ class GameController():
         if self.state == "play":
             print(f"Validating Input... {self.current_input_string}")
             if self.game.validate_word(self.current_input_string):
-                # Prototype Logic for Handling Correct Input
-                self.game.update_score(10)
+                # Use the matched word's configured score (apply game multiplier)
+                matched_word_obj = None
+                for w in self.game.current_words:
+                    if w.word == self.current_input_string:
+                        matched_word_obj = w
+                        break
+                if matched_word_obj is not None:
+                    score_value = int(matched_word_obj.score * self.game.multiplier)
+                else:
+                    # fallback to 10 if something unexpected happened
+                    score_value = 10
+                self.game.update_score(score_value)
                 self.game.update_time(5.0)
-                words = []
-                for i in range(3):
-                    words.append(prototype_words[i])
-                self.game.update_words(words) # Placeholder for new words
+                # Fetch a fresh set of words from the (possibly updated) difficulty window
+                # Passing `increment_correct=True` marks this fetch as occurring after a correct guess
+                # and allows the WordManager to advance difficulty when the session threshold is met.
+                words = self.word_manager.get_three_cloud_words(increment_correct=True)
+                self.game.update_words(words)
                 self.graphics.update_platforms(self.current_input_string)
                 self.graphics.add_words(words)
                 self.current_input_string = ""

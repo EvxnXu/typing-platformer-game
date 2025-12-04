@@ -60,9 +60,7 @@ def main():
 	raw_scores = [score_word(word) for word in words]
 	normed_scores = normalize_scores(raw_scores)
 
-	# Pair words with scores
 	word_score_pairs = list(zip(words, normed_scores))
-	# Sort by score ascending
 	word_score_pairs.sort(key=lambda x: x[1])
 
 	# Split into 20 sub-dictionaries
@@ -75,7 +73,6 @@ def main():
 			for word, score in chunk:
 				out.write(f'{word}|{score}\n')
 
-	print('Done. Created 20 sub-dictionaries.')
 
 if __name__ == '__main__':
 	main()
