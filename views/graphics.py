@@ -1,6 +1,6 @@
 """Graphics Class"""
 import pygame
-from models import Record, Word
+from models import Record, Word, Game
 from .button import Button
 from .platform import Platform
 from .character import Character
@@ -9,7 +9,7 @@ class Assets:
     """Asset Class to Load and store Game Assets"""
     def __init__(self):
         pygame.font.init()
-        self.font = pygame.font.Font("assets/Kenney Future Narrow.ttf", 18)
+        self.font = pygame.font.Font("assets/Kenney Mini.ttf", 18)
         self.background = pygame.image.load("assets/background.png").convert_alpha()
         self.main_menu = pygame.image.load("assets/main-menu.png").convert_alpha()
         self.settings = pygame.image.load("assets/settings-cog.png").convert_alpha()
@@ -24,7 +24,7 @@ class Assets:
 class Graphics:
     def __init__(self): 
         w = pygame.display.Info().current_w
-        self.screen =  pygame.display.set_mode((w/4, w/4*1.5))
+        self.screen = pygame.display.set_mode((w/4, w/4*1.5))
         pygame.display.set_caption("Test")
 
         self.assets = Assets()
@@ -36,6 +36,7 @@ class Graphics:
     # Functions for Rendering States Onto the Screen
     def render_main_menu(self):
         """Render the Main Menu onto the Screen"""
+        self.buttons = []
         # Get Size of Screen
         screen_W, screen_H = self.screen.get_size()
 
@@ -62,7 +63,8 @@ class Graphics:
             button.draw(self.screen)
             
     
-    def render_pause(self):
+    def render_pause_menu(self):
+        self.buttons = []
         # Get Size of Screen
         screen_W, screen_H = self.screen.get_size()
 
@@ -93,7 +95,8 @@ class Graphics:
             button.render_text_center(button.name, self.assets.font, self.screen)
 
 
-    def render_game(self, new_words: list[Word] = [], matched_word: str = None):
+    def render_game(self, game: Game, input: str):
+        self.buttons = []
         # Get Size of Screen
         screen_W, screen_H = self.screen.get_size()
 
@@ -101,35 +104,15 @@ class Graphics:
         bg = pygame.transform.scale(self.assets.background, (screen_W, screen_H))
         self.screen.blit(bg, (0, 0))
 
-        # If No Platforms Exist, Create Initial Platform and Place Character on It
-        if not self.platforms:
-            initial_platform = Platform(self.screen, self.assets.cloud, "start")
-            initial_platform.x, initial_platform.y = self.anchor_middle(screen_W, screen_H, initial_platform.width, initial_platform.height)
-            initial_platform.rect.topleft = (initial_platform.x, initial_platform.y)
-            self.platforms.append(initial_platform)
-            self.character.teleport_to_platform(initial_platform)
+        # Render Text
+        score_text = self.assets.font.render(f"Score: {game.score}", True, (0, 0, 0))
+        input_text = self.assets.font.render(f"{input}", True, (0, 0, 0))
+        time_text = self.assets.font.render(f"Time: {int(game.remaining_time)}", True, (0, 0, 0))
 
-        # Update the Location of Current Platforms if Applicable
-        if matched_word:
-            dx, dy = 0, 0
-            # Calculate Displacement to Center Matched Platform
-            for platform in self.platforms:
-                if platform.word == matched_word:
-                    dest_x, dest_y = self.anchor_middle(screen_W, screen_H, platform.width, platform.height)
-                    curr_x, curr_y = platform.current_position()
-                    dx, dy = curr_x - dest_x, curr_y - dest_y
-            # Update Positions of All Platforms and Character
-            for platform in self.platforms:
-                platform.update_position(-dx, -dy)
-                if platform.word == matched_word:
-                    self.character.teleport_to_platform(platform)
-
-        # Add Platforms for New Words if Applicable
-        for word in new_words:
-            print(word.word)
-            platform = Platform(self.screen, self.assets.cloud, word.word, self.platforms)
-            platform.draw(self.screen)
-            self.platforms.append(platform)
+        # Display Text
+        self.screen.blit(score_text, self.anchor_top_left())
+        self.screen.blit(input_text, self.anchor_top_middle(screen_W, input_text.get_width()))
+        self.screen.blit(time_text, self.anchor_top_right(screen_W, time_text.get_width()))
 
         # Draw Platforms
         for platform in self.platforms:
@@ -141,6 +124,7 @@ class Graphics:
 
     def render_leaderboard(self, records: list[Record]):
         """Render Leaderboard"""
+        self.buttons = []
         # Get Size of Screen
         screen_W, screen_H = self.screen.get_size()
 
@@ -192,6 +176,41 @@ class Graphics:
             button.draw(self.screen)
 
 
+    def render_end_game(self, score: int, input: str):
+        """Render End Game Screen"""
+        self.buttons = []
+        # Get Size of Screen
+        screen_W, screen_H = self.screen.get_size()
+
+        # Fill Background
+        bg = pygame.transform.scale(self.assets.background, (screen_W, screen_H))
+        self.screen.blit(bg, (0, 0))
+
+        # Add Leaderboard Card
+        leaderboard_width, leaderboard_height = screen_W * 0.8, screen_W * 1.2
+        leaderboard_x, leaderboard_y = screen_W * 0.1, screen_H * 0.1
+        leaderboard = pygame.transform.scale(self.assets.leaderboard, (leaderboard_width, leaderboard_height))
+
+        self.screen.blit(leaderboard, (leaderboard_x, leaderboard_y))
+
+        # Render Prompt Text
+        score_text = self.assets.font.render(f"Score: {score}", True, (0, 0, 0))
+        prompt_text = self.assets.font.render(f"Enter your name: {input}", True, (0, 0, 0))
+
+
+        # Horizontal center of leaderboard
+        center_x = leaderboard_x + leaderboard_width // 2
+
+        # Create centered rects
+        score_rect = score_text.get_rect(center=(center_x, leaderboard_y + 50))
+        prompt_rect = prompt_text.get_rect(center=(center_x, leaderboard_y + 120))
+
+        # Draw text
+        self.screen.blit(score_text, score_rect)
+        self.screen.blit(prompt_text, prompt_rect)
+
+
+    # Game Element Management Functions
     def check_button_clicked(self, event: pygame.event):
         """If event was mouse click, return clicked button if applicable"""
         if event.type != pygame.MOUSEBUTTONDOWN:
@@ -203,22 +222,59 @@ class Graphics:
                 return button.name
         
         return None
-    
 
-    # Layout Helpers
-    def anchor_top_left(self, margin = 10):
-        return margin, margin
-    
-
-    def anchor_top_right(self, W: int, w: int, margin = 10):
-        return W - w - margin, margin
-    
-
-    def anchor_middle(self, W: int, H: int, w: int, h: int):
-        return W // 2 - w // 2, H // 2 - h // 2
+    def init_game_elements(self, words: list[Word]):
+        """Initialize Start of Game Elements"""
+        W, H = self.screen.get_size()
+        self.platforms = []
+        starting_platform = Platform(self.screen, self.assets.cloud, "")
+        starting_platform.x, starting_platform.y = self.anchor_bottom_middle(W, H, starting_platform.width, starting_platform.height)
+        starting_platform.rect.topleft = (starting_platform.x, starting_platform.y)
+        self.character.teleport_to_platform(starting_platform)
+        self.platforms.append(starting_platform)
 
 
-    # Button Helpers
+    def add_words(self, words: list[Word]):
+        """Add Platforms for New Words"""
+        for word in words:
+            print(f"Adding Platform {word.word}")
+            platform = Platform(self.screen, self.assets.cloud, word.word, self.platforms)
+            self.platforms.append(platform)
+
+
+    def update_platforms(self, matched_word: str):
+        """Update Platforms After a Word is Matched"""
+        # Get Size of Screen
+        screen_W, screen_H = self.screen.get_size()
+        dx, dy = 0, 0
+
+        # Find Platform with Matching Word
+        matched_platform = None
+        for platform in self.platforms:
+            if platform.word == matched_word:
+                matched_platform = platform
+            else:
+                platform.word = ""
+
+        # Compute displacement
+        dest_x, dest_y = self.anchor_bottom_middle(
+            screen_W, screen_H,
+            matched_platform.width, matched_platform.height
+        )
+        curr_x, curr_y = matched_platform.current_position()
+        dx, dy = curr_x - dest_x, curr_y - dest_y
+
+        updated_platforms = []
+        # Update Positions of All Platforms and Character
+        for platform in self.platforms:
+            if platform.update_position(-dx, -dy, screen_W, screen_H):
+                updated_platforms.append(platform)
+        
+        self.character.teleport_to_platform(matched_platform)
+        self.platforms = updated_platforms
+
+
+    # Button Size Helpers
     def banner_size(self) -> tuple[int, int]:
         W, H = self.screen.get_size()
         h = H // 11.25
@@ -230,3 +286,22 @@ class Graphics:
         """Calculate Width, Height of Small Button Relative to Screen Size"""
         W, H = self.screen.get_size()
         return W // 20, W // 20
+    
+
+    # Layout Helpers
+    def anchor_top_left(self, margin = 10):
+        return margin, margin
+    
+
+    def anchor_top_right(self, W: int, w: int, margin = 10):
+        return W - w - margin, margin
+
+
+    def anchor_top_middle(self, W: int, w: int, margin = 10):
+        return W // 2 - w // 2, margin
+    
+
+    def anchor_bottom_middle(self, W: int, H: int, w: int, h: int):
+        return W // 2 - w // 2, H - h - (H // 12)
+    
+    
