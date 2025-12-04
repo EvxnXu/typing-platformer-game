@@ -5,9 +5,6 @@ from views import Graphics
 
 # Prototype Records and Words
 prototype_records = [Record("Mario", 99), Record("Mario", 98), Record("Luigi", 95), Record("Bob the Builder", 90)]
-prototype_words = []
-for word in ["Example", "Typing", "Words", "Platform", "Python", "Programming", "Development", "Controller", "Graphics", "Functionality"]:
-    prototype_words.append(Word(10, word))
 
 class GameController():
     
@@ -108,10 +105,9 @@ class GameController():
         """Handle Mouse Click Events"""
         if click == "play":
             self.start_game(self.difficulty_multiplier)
-            words = self.word_manager.get_three_cloud_words()
-            self.game.update_words(words)
-            self.graphics.init_game_elements(words)
-            self.graphics.add_words(words)
+            self.game.update_words(self.word_manager.get_three_cloud_words())
+            self.graphics.init_game_elements(self.game.current_words)
+            self.graphics.add_words(self.game.current_words)
             self.state = "play"
         elif click == "leaderboard":
             self.state = "leaderboard"
@@ -154,10 +150,9 @@ class GameController():
                 # Fetch a fresh set of words from the (possibly updated) difficulty window
                 # Passing `increment_correct=True` marks this fetch as occurring after a correct guess
                 # and allows the WordManager to advance difficulty when the session threshold is met.
-                words = self.word_manager.get_three_cloud_words(increment_correct=True)
-                self.game.update_words(words)
+                self.game.update_words(self.word_manager.get_three_cloud_words(increment_correct=True))
                 self.graphics.update_platforms(self.current_input_string)
-                self.graphics.add_words(words)
+                self.graphics.add_words(self.game.current_words)
                 self.current_input_string = ""
                 print("Correct Input")
             else:
