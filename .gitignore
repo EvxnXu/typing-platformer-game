@@ -1,3 +1,15 @@
 .venv
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Database files
+*.db
+leaderboard.db
+leaderboard.db
 /.pytest_cache
 */__pycache__
