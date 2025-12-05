@@ -90,8 +90,7 @@ class Platform:
         self.y += step_y
         
         # Bounds check for off-screen
-        if not (0 <= self.x <= W - self.width and 
-                0 <= self.y <= H - self.height):
+        if not (self.y <= H - self.height):
             return False
 
         # Update rect
