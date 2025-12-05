@@ -5,13 +5,13 @@ import random
 class Platform:
     def __init__(self, screen: pygame.Surface, image: pygame.Surface, word: str, existing: list = []):
         """Initialize Platform"""
-        self.width, self.height = self.get_size(screen)
+        self.image = image
+        self.width, self.height = image.get_width(), image.get_height()
         self.x, self.y = self.get_random_coords(screen, existing)
         self.dest_x, self.dest_y = self.x, self.y
         self.word = word
-        self.image = pygame.transform.scale(image, (self.width, self.height))
         self.rect = self.image.get_rect(topleft=(self.x, self.y))
-        self.speed = max(5, screen.get_width() // 150)
+        self.speed = 5
 
 
     def draw(self, screen: pygame.Surface):
@@ -32,12 +32,6 @@ class Platform:
         """Fit Font Size to Platform"""
         font_size = self.height // 4
         self.font = pygame.font.Font("assets/Kenney Mini.ttf", font_size)
-        
-
-    def get_size(self, screen: pygame.Surface):
-        """Get Size of Platform"""
-        w = screen.get_size()[0]
-        return w // 3, w // 9
     
 
     def get_random_coords(self, screen: pygame.Surface, existing: list) -> tuple[int, int]:

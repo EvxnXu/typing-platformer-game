@@ -7,7 +7,8 @@ from .character import Character
 
 class Assets:
     """Asset Class to Load and store Game Assets"""
-    def __init__(self):
+    def __init__(self, screen: pygame.Surface):
+        """Load and Scale all Assets to Screen Size"""
         pygame.font.init()
         self.font = pygame.font.Font("assets/Kenney Mini.ttf", 18)
         self.background = pygame.image.load("assets/background.png").convert_alpha()
@@ -20,6 +21,12 @@ class Assets:
         self.character = pygame.image.load("assets/green-char.png").convert_alpha()
         self.cloud = pygame.image.load("assets/cloud.png").convert_alpha()
 
+        W = screen.get_width()
+
+        platform_w, platform_h = W // 3, W // 9
+        self.platform = pygame.transform.scale(
+            self.cloud, (platform_w, platform_h)
+        )
 
 class Graphics:
     def __init__(self): 
@@ -27,14 +34,14 @@ class Graphics:
         self.screen = pygame.display.set_mode((w/4, w/4*1.5))
         pygame.display.set_caption("Test")
 
-        self.assets = Assets()
+        self.assets = Assets(self.screen)
         self.buttons: list[Button] = []
         self.platforms: list[Platform] = []
         self.character = Character(self.screen, self.assets.character)
 
 
     # Functions for Rendering States Onto the Screen
-    def render_main_menu(self):
+    def render_main_menu(self, difficulty: int):
         """Render the Main Menu onto the Screen"""
         self.buttons = []
         # Get Size of Screen
@@ -56,11 +63,24 @@ class Graphics:
         settings_x, settings_y = self.anchor_top_right(screen_W, button_w)
         self.buttons.append(Button("leaderboard", settings_x, settings_y, button_w, button_h, self.assets.settings))
 
-        # TODO: Add Difficulty Button
+        # Difficulty Button
+        button_w, button_h = self.banner_size()
+        diff_x, diff_y = play_x, screen_H - (screen_H // 2) - button_h // 3
+        diff_text = None
+        if difficulty == 1:
+            diff_text = "easy"
+        elif difficulty == 2:
+            diff_text = "medium"
+        else:
+            diff_text = "hard"
+        diff = Button("difficulty", diff_x, diff_y, button_w, button_h, self.assets.record_card)
+        self.buttons.append(diff)
 
         # Draw Buttons
         for button in self.buttons:
             button.draw(self.screen)
+
+        diff.render_text_center(diff_text, self.assets.font, self.screen)
             
     
     def render_pause_menu(self):
@@ -219,6 +239,8 @@ class Graphics:
         for button in self.buttons:
             if button.is_clicked(event):
                 print(f"{button.name} was clicked.")
+                if button.name in ["easy", "medium", "hard"]:
+                    return "difficulty"
                 return button.name
         
         return None
@@ -227,7 +249,7 @@ class Graphics:
         """Initialize Start of Game Elements"""
         W, H = self.screen.get_size()
         self.platforms = []
-        starting_platform = Platform(self.screen, self.assets.cloud, "")
+        starting_platform = Platform(self.screen, self.assets.platform, "")
         starting_platform.x, starting_platform.y = self.anchor_bottom_middle(W, H, starting_platform.width, starting_platform.height)
         starting_platform.dest_x, starting_platform.dest_y = starting_platform.x, starting_platform.y
         starting_platform.rect.topleft = (starting_platform.x, starting_platform.y)
@@ -240,7 +262,7 @@ class Graphics:
         """Add Platforms for New Words"""
         for word in words:
             print(f"Adding Platform {word.word}")
-            platform = Platform(self.screen, self.assets.cloud, word.word, self.platforms)
+            platform = Platform(self.screen, self.assets.platform, word.word, self.platforms)
             self.platforms.append(platform)
 
 
@@ -251,11 +273,12 @@ class Graphics:
 
         # Find Platform with Matching Word
         matched_platform = None
+        platforms = []
         for p in self.platforms:
             if p.word == matched_word:
                 matched_platform = p
-            else:
-                p.word = None
+                platforms.append(p)
+                self.platforms = platforms
         
         if matched_platform is None:
             return
@@ -268,6 +291,7 @@ class Graphics:
 
         curr_x, curr_y = matched_platform.current_position()
         dx, dy = curr_x - dest_x, curr_y - dest_y
+        self.dx, self.dy = dx, dy
         
         # Update Positions of All Platforms and Character
         for platform in self.platforms:

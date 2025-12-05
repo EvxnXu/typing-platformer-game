@@ -33,7 +33,7 @@ class GameController():
 
             # Main Menu State
             if self.state == "menu":
-                self.graphics.render_main_menu()
+                self.graphics.render_main_menu(self.difficulty_multiplier)
             
             # Play State
             if self.state == "play":
@@ -157,8 +157,6 @@ class GameController():
                 print("Correct Input")
             else:
                 self.graphics.render_game(self.game, self.current_input_string)
-
-        print("End Input Handling")
 
         
     def start_game(self, difficulty_multiplier: int):
