@@ -38,6 +38,7 @@ class GameController():
             # Play State
             if self.state == "play":
                 self.game.update_time(-dtime)
+                self.graphics.move_platforms()
                 if self.game.is_over():
                     self.state = "end"
                     self.current_input_string = ""

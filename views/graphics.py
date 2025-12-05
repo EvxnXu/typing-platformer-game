@@ -264,14 +264,17 @@ class Graphics:
         curr_x, curr_y = matched_platform.current_position()
         dx, dy = curr_x - dest_x, curr_y - dest_y
 
-        updated_platforms = []
         # Update Positions of All Platforms and Character
         for platform in self.platforms:
-            if platform.update_position(-dx, -dy, screen_W, screen_H):
-                updated_platforms.append(platform)
+            platform.update_destination(-dx, -dy)
         
-        self.character.teleport_to_platform(matched_platform)
-        self.platforms = updated_platforms
+    def move_platforms(self):
+        """Move Platforms toward their destination"""
+        remaining = []
+        for platform in self.platforms:
+            if platform.update_position(self.screen.get_width(), self.screen.get_height()):
+                remaining.append(platform)
+        self.platforms = remaining
 
 
     # Button Size Helpers
