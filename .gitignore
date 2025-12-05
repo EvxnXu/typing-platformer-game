@@ -11,3 +11,5 @@ __pycache__/
 *.db
 leaderboard.db
 leaderboard.db
+/.pytest_cache
+*/__pycache__
