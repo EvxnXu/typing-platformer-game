@@ -229,9 +229,11 @@ class Graphics:
         self.platforms = []
         starting_platform = Platform(self.screen, self.assets.cloud, "")
         starting_platform.x, starting_platform.y = self.anchor_bottom_middle(W, H, starting_platform.width, starting_platform.height)
+        starting_platform.dest_x, starting_platform.dest_y = starting_platform.x, starting_platform.y
         starting_platform.rect.topleft = (starting_platform.x, starting_platform.y)
         self.character.teleport_to_platform(starting_platform)
         self.platforms.append(starting_platform)
+        self.add_words(words)
 
 
     def add_words(self, words: list[Word]):
@@ -246,24 +248,27 @@ class Graphics:
         """Update Platforms After a Word is Matched"""
         # Get Size of Screen
         screen_W, screen_H = self.screen.get_size()
-        dx, dy = 0, 0
 
         # Find Platform with Matching Word
         matched_platform = None
-        for platform in self.platforms:
-            if platform.word == matched_word:
-                matched_platform = platform
+        for p in self.platforms:
+            if p.word == matched_word:
+                matched_platform = p
             else:
-                platform.word = ""
+                p.word = None
+        
+        if matched_platform is None:
+            return
 
         # Compute displacement
         dest_x, dest_y = self.anchor_bottom_middle(
             screen_W, screen_H,
             matched_platform.width, matched_platform.height
         )
+
         curr_x, curr_y = matched_platform.current_position()
         dx, dy = curr_x - dest_x, curr_y - dest_y
-
+        
         # Update Positions of All Platforms and Character
         for platform in self.platforms:
             platform.update_destination(-dx, -dy)

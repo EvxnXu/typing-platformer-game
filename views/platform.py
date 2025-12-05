@@ -58,11 +58,13 @@ class Platform:
         """Get Current Position of the Platform"""
         return self.x, self.y
     
+
     def update_destination(self, dx: int, dy: int):
         """Set the Destination of the Platform"""
         self.dest_x += dx
         self.dest_y += dy
-    
+
+
     def update_position(self, W: int, H: int) -> bool:
         """Update the Position of the Platform, return False if moving offscreen"""
         

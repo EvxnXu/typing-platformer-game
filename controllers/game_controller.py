@@ -108,7 +108,6 @@ class GameController():
             self.start_game(self.difficulty_multiplier)
             self.game.update_words(self.word_manager.get_three_cloud_words())
             self.graphics.init_game_elements(self.game.current_words)
-            self.graphics.add_words(self.game.current_words)
             self.state = "play"
         elif click == "leaderboard":
             self.state = "leaderboard"
