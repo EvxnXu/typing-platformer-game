@@ -23,11 +23,33 @@ class GameController():
         running = True
         pygame.key.start_text_input()
 
+        self.graphics.render_main_menu(self.difficulty_multiplier)
+        pygame.display.update()
+
         # Main Game Loop
         while running:
             
             dtime = self.clock.tick(60) / 1000.0
-            pygame.display.update()
+
+            # Global Event Handling
+            for event in pygame.event.get():
+
+                # Quit Game Event
+                if event.type == pygame.QUIT:
+                    running = False
+                    break
+
+                # Text Input
+                elif event.type == pygame.TEXTINPUT:
+                    self.handle_input(event.text)
+
+                # Keystrokes
+                elif event.type == pygame.KEYDOWN:
+                    self.handle_key(event.key)
+
+                # Mouse Clicks
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    self.handle_click(self.graphics.check_button_clicked(event))
 
             # Render According to State
 
@@ -59,25 +81,9 @@ class GameController():
                 self.graphics.render_end_game(self.game.score, self.current_input_string) 
 
 
-            # Global Event Handling
-            for event in pygame.event.get():
+            # Update Display
+            pygame.display.update()
 
-                # Quit Game Event
-                if event.type == pygame.QUIT:
-                    running = False
-                    break
-
-                # Text Input
-                elif event.type == pygame.TEXTINPUT:
-                    self.handle_input(event.text)
-
-                # Keystrokes
-                elif event.type == pygame.KEYDOWN:
-                    self.handle_key(event.key)
-
-                # Mouse Clicks
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    self.handle_click(self.graphics.check_button_clicked(event))
         
         # Stop Text Input when Exiting Game
         pygame.key.stop_text_input()  
