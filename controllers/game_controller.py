@@ -104,7 +104,7 @@ class GameController():
                 self.current_input_string = ""
                 self.state = "leaderboard"
         elif key == pygame.K_BACKSPACE:
-            if self.state == "play":
+            if self.state == "play" or self.state == "end":
                 self.current_input_string = self.current_input_string[:-1]
     
 
