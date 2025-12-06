@@ -4,22 +4,23 @@ from models import Record, Word, Game
 from .button import Button
 from .platform import Platform
 from .character import Character
+from utils import resource_path
 
 class Assets:
     """Asset Class to Load and store Game Assets"""
     def __init__(self, W, H):
         """Load and Scale all Assets to Screen Size"""
         pygame.font.init()
-        self.font = pygame.font.Font("assets/Kenney Mini.ttf", 18)
-        self.background = pygame.image.load("assets/background.png").convert_alpha()
-        self.main_menu = pygame.image.load("assets/main-menu.png").convert_alpha()
-        self.settings = pygame.image.load("assets/settings-cog.png").convert_alpha()
-        self.play = pygame.image.load("assets/play-banner.png").convert_alpha()
-        self.leaderboard = pygame.image.load("assets/leaderboard.png").convert_alpha()
-        self.record_card = pygame.image.load("assets/record-card.png").convert_alpha()
-        self.close = pygame.image.load("assets/close-button.png").convert_alpha()
-        self.character = pygame.image.load("assets/green-char.png").convert_alpha()
-        self.cloud = pygame.image.load("assets/cloud.png").convert_alpha()
+        self.font = pygame.font.Font(resource_path("assets/Kenney Mini.ttf"), 18)
+        self.background = pygame.image.load(resource_path("assets/background.png")).convert_alpha()
+        self.main_menu = pygame.image.load(resource_path("assets/main-menu.png")).convert_alpha()
+        self.settings = pygame.image.load(resource_path("assets/settings-cog.png")).convert_alpha()
+        self.play = pygame.image.load(resource_path("assets/play-banner.png")).convert_alpha()
+        self.leaderboard = pygame.image.load(resource_path("assets/leaderboard.png")).convert_alpha()
+        self.record_card = pygame.image.load(resource_path("assets/record-card.png")).convert_alpha()
+        self.close = pygame.image.load(resource_path("assets/close-button.png")).convert_alpha()
+        self.character = pygame.image.load(resource_path("assets/green-char.png")).convert_alpha()
+        self.cloud = pygame.image.load(resource_path("assets/cloud.png")).convert_alpha()
 
         platform_w, platform_h = W // 3, W // 9
         self.platform = pygame.transform.scale(
@@ -319,5 +320,3 @@ class Graphics:
 
     def anchor_bottom_middle(self, W: int, H: int, w: int, h: int):
         return W // 2 - w // 2, H - h - (H // 12)
-    
-    

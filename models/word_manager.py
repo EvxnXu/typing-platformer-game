@@ -15,7 +15,7 @@ from __future__ import annotations
 import os
 import random
 from typing import List, Tuple, Dict, Optional
-
+from utils import resource_path
 from .word import Word
 
 
@@ -64,7 +64,7 @@ class WordManager:
             dict_dir = self.dict_dir
         self.dicts = []
         for i in range(1, 21):
-            filename = os.path.join(dict_dir, f"subdict_{i:02d}.txt")
+            filename = resource_path(os.path.join(self.dict_dir, f"subdict_{i:02d}.txt"))
             entries: List[Tuple[str, int]] = []
             try:
                 with open(filename, "r", encoding="utf-8") as f:

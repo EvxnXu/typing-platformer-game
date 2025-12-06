@@ -3,9 +3,6 @@ import pygame
 from models import Game, Record, Leaderboard, Word, WordManager
 from views import Graphics
 
-# Prototype Records and Words
-prototype_records = [Record("Mario", 99), Record("Mario", 98), Record("Luigi", 95), Record("Bob the Builder", 90)]
-
 class GameController():
     
     def __init__(self):
