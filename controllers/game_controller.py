@@ -23,40 +23,13 @@ class GameController():
         running = True
         pygame.key.start_text_input()
 
+        self.graphics.render_main_menu(self.difficulty_multiplier)
+        pygame.display.update()
+
         # Main Game Loop
         while running:
             
             dtime = self.clock.tick(60) / 1000.0
-            pygame.display.update()
-
-            # Render According to State
-
-            # Main Menu State
-            if self.state == "menu":
-                self.graphics.render_main_menu()
-            
-            # Play State
-            if self.state == "play":
-                self.game.update_time(-dtime)
-                if self.game.is_over():
-                    self.state = "end"
-                    self.current_input_string = ""
-                    self.graphics.render_end_game(self.game.score, self.current_input_string)
-                else:
-                    self.graphics.render_game(self.game, self.current_input_string)
-
-            # Pause State
-            elif self.state == "pause":
-                self.graphics.render_pause_menu()
-
-            # Leaderboard State
-            elif self.state == "leaderboard":
-                self.graphics.render_leaderboard(self.leaderboard.get_top_records())
-
-            # End Game State
-            elif self.state == "end":
-                self.graphics.render_end_game(self.game.score, self.current_input_string) 
-
 
             # Global Event Handling
             for event in pygame.event.get():
@@ -77,6 +50,40 @@ class GameController():
                 # Mouse Clicks
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     self.handle_click(self.graphics.check_button_clicked(event))
+
+            # Render According to State
+
+            # Main Menu State
+            if self.state == "menu":
+                self.graphics.render_main_menu(self.difficulty_multiplier)
+            
+            # Play State
+            if self.state == "play":
+                self.game.update_time(-dtime)
+                self.graphics.move_platforms()
+                if self.game.is_over():
+                    self.state = "end"
+                    self.current_input_string = ""
+                    self.graphics.render_end_game(self.game.score, self.current_input_string)
+                else:
+                    self.graphics.render_game(self.game, self.current_input_string)
+
+            # Pause State
+            elif self.state == "pause":
+                self.graphics.render_pause_menu()
+
+            # Leaderboard State
+            elif self.state == "leaderboard":
+                self.graphics.render_leaderboard(self.leaderboard.get_top_records())
+
+            # End Game State
+            elif self.state == "end":
+                self.graphics.render_end_game(self.game.score, self.current_input_string) 
+
+
+            # Update Display
+            pygame.display.update()
+
         
         # Stop Text Input when Exiting Game
         pygame.key.stop_text_input()  
@@ -107,7 +114,6 @@ class GameController():
             self.start_game(self.difficulty_multiplier)
             self.game.update_words(self.word_manager.get_three_cloud_words())
             self.graphics.init_game_elements(self.game.current_words)
-            self.graphics.add_words(self.game.current_words)
             self.state = "play"
         elif click == "leaderboard":
             self.state = "leaderboard"
@@ -157,8 +163,6 @@ class GameController():
                 print("Correct Input")
             else:
                 self.graphics.render_game(self.game, self.current_input_string)
-
-        print("End Input Handling")
 
         
     def start_game(self, difficulty_multiplier: int):
