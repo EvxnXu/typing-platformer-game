@@ -1,6 +1,7 @@
 """Platform Class"""
 import pygame
 import random
+from utils import resource_path
 
 class Platform:
     def __init__(self, screen: pygame.Surface, image: pygame.Surface, word: str, existing: list = []):
@@ -31,7 +32,7 @@ class Platform:
     def fit_font(self):
         """Fit Font Size to Platform"""
         font_size = self.height // 4
-        self.font = pygame.font.Font("assets/Kenney Mini.ttf", font_size)
+        self.font = pygame.font.Font(resource_path("assets/Kenney Mini.ttf"), font_size)
     
 
     def get_random_coords(self, screen: pygame.Surface, existing: list) -> tuple[int, int]:
