@@ -38,6 +38,7 @@ Game over-
 - Enter your name when prompted to have your scored saved and added to the leaderboard.
 
 ## Credits
-Kenney Pixel Adventure UI Pack and Pixel Platformer under the Creative Commons CC0 License: https://www.kenney.nl/
-Vectors and icons by <a href="https://www.svgrepo.com" target="_blank">SVG Repo</a>
+- Kenney Pixel Adventure UI Pack and Pixel Platformer under the Creative Commons CC0 License: https://www.kenney.nl/
+- Vectors and icons by <a href="https://www.svgrepo.com" target="_blank">SVG Repo</a>
+
 
