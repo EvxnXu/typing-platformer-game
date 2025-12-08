@@ -109,6 +109,7 @@ class GameController():
         """Handle Mouse Click Events"""
         if click == "play":
             self.start_game(self.difficulty_multiplier)
+            self.word_manager.reset_progress()
             self.game.update_words(self.word_manager.get_three_cloud_words())
             self.graphics.init_game_elements(self.game.current_words)
             self.state = "play"

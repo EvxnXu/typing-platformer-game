@@ -12,7 +12,7 @@ class Platform:
         self.dest_x, self.dest_y = self.x, self.y
         self.word = word
         self.rect = self.image.get_rect(topleft=(self.x, self.y))
-        self.speed = 5
+        self.speed = 12
 
 
     def draw(self, screen: pygame.Surface):

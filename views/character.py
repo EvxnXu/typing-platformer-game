@@ -33,11 +33,11 @@ class Character:
         dx = self.target_platform.x + (self.target_platform.width - self.width) // 2 - self.x
         dy = self.target_platform.y - (self.height + self.target_platform.height) // 6 - self.y
         dist = (dx * dx + dy * dy) ** 0.5
-        if dist <= 5:
+        if dist <= 12:
             self.teleport_to_platform()
         else:
-            self.x += dx / dist * 5
-            self.y += dy / dist * 5
+            self.x += dx / dist * 12
+            self.y += dy / dist * 12
             self.rect.topleft = (self.x, self.y)
 
 

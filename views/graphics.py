@@ -14,7 +14,7 @@ class Assets:
         self.font = pygame.font.Font(resource_path("assets/Kenney Mini.ttf"), 18)
         self.background = pygame.image.load(resource_path("assets/background.png")).convert_alpha()
         self.main_menu = pygame.image.load(resource_path("assets/main-menu.png")).convert_alpha()
-        self.settings = pygame.image.load(resource_path("assets/settings-cog.png")).convert_alpha()
+        self.leaderboard_icon = pygame.image.load(resource_path("assets/leaderboard-icon.png")).convert_alpha()
         self.play = pygame.image.load(resource_path("assets/play-banner.png")).convert_alpha()
         self.leaderboard = pygame.image.load(resource_path("assets/leaderboard.png")).convert_alpha()
         self.record_card = pygame.image.load(resource_path("assets/record-card.png")).convert_alpha()
@@ -58,10 +58,10 @@ class Graphics:
         play_x, play_y = self.W // 2 - button_w // 2, self.H - (self.H // 6) - button_h // 3
         self.buttons.append(Button("play", play_x, play_y, button_w, button_h, self.assets.play))
 
-        # Settings Button
+        # Leaderboard Button
         button_w, button_h = self.small_button_size()
-        settings_x, settings_y = self.anchor_top_right(self.W, button_w)
-        self.buttons.append(Button("leaderboard", settings_x, settings_y, button_w, button_h, self.assets.settings))
+        record_x, record_y = self.anchor_top_right(self.W, button_w)
+        self.buttons.append(Button("leaderboard", record_x, record_y, button_w, button_h, self.assets.leaderboard_icon))
 
         # Difficulty Button
         button_w, button_h = self.banner_size()
@@ -158,8 +158,6 @@ class Graphics:
         close = pygame.transform.scale(self.assets.close, (close_width, close_height))
         self.buttons.append(Button("close", (leaderboard_x + leaderboard_width - close_width * 2), (leaderboard_y - (close_width * 0.2 )), close_width, close_height, close))
 
-        # TODO: Add Column Labels for Records
-
         # Add Record Cards
         record_width, record_height = self.W * 0.7, self.H * 0.05
         record_spacing = self.H * 0.01
@@ -240,7 +238,7 @@ class Graphics:
     def init_game_elements(self, words: list[Word]):
         """Initialize Start of Game Elements"""
         self.platforms = []
-        temp = Platform(self.screen, self.assets.platform, "")
+        temp = Platform(self.screen, self.assets.platform, "Type the Words!")
         temp.x, temp.y = self.anchor_bottom_middle(self.W, self.H, temp.width, temp.height)
         temp.dest_x, temp.dest_y = temp.x, temp.y
         temp.rect.topleft = (temp.x, temp.y)
