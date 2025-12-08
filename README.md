@@ -40,5 +40,6 @@ Game over-
 ## Credits
 - Kenney Pixel Adventure UI Pack and Pixel Platformer under the Creative Commons CC0 License: https://www.kenney.nl/
 - Vectors and icons by <a href="https://www.svgrepo.com" target="_blank">SVG Repo</a>
-
+- BoldPixels font. Free for personal and commercial use under the 1001Fonts Free For Commercial Use License (FFC):
+https://www.1001fonts.com/licenses/ffc.html
 
