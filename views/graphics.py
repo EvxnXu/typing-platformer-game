@@ -11,7 +11,7 @@ class Assets:
     def __init__(self, W, H):
         """Load and Scale all Assets to Screen Size"""
         pygame.font.init()
-        self.font = pygame.font.Font(resource_path("assets/Kenney Mini.ttf"), 18)
+        self.font = pygame.font.Font(resource_path("assets/boldpixels.boldpixels.ttf"), 18)
         self.background = pygame.image.load(resource_path("assets/background.png")).convert_alpha()
         self.main_menu = pygame.image.load(resource_path("assets/main-menu.png")).convert_alpha()
         self.leaderboard_icon = pygame.image.load(resource_path("assets/leaderboard-icon.png")).convert_alpha()
