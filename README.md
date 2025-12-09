@@ -13,7 +13,7 @@
 This project is a platforming game meant to teach users to type accurately and quickly and learn new words as they practice. Have Fun!!!
 
 
-## How to install
+## How to install executable file
 
 Step 1. Click on the latest release under the 'Releases' tab on this page.
 
@@ -22,6 +22,25 @@ Step 2. Download the .exe file.
 Step 3. Click on the .exe file.
 
 Step 4. Enjoy!
+
+
+How to install source code from GitHub
+Step 1. Click the Green "<> Code" Button on This Page and Select "Download ZIP"
+
+Step 2. Unzip the Entire Package to Your Desired Directory
+
+Step 3. Ensure you have Python Installed. If not, you may find it here: https://www.python.org/downloads/
+
+Step 4. Ensure you have pygame Installed. If not, you may find how to do so here: https://www.pygame.org/wiki/GettingStarted
+
+How to build
+Step 1. Navigate to Root Directory of the Unzipped Folder
+
+Step 2. Open a Terminal in the same location as Step 1.
+
+Step 3. Run python3 main.py
+
+
 
 ## How to play
 
